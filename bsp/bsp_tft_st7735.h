@@ -14,8 +14,10 @@ void setPos(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey);
 void WriteAnColor(uint16_t color);
 void LCD_Init(void);
 void LCD_Flush_Color(uint16_t color);
-void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t pColor);
+void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t* pColor);
 void gram_set (uint16_t color, uint16_t buffersize);
+
+
 
 #endif
 

@@ -1,6 +1,7 @@
 #include "bsp_tft_st7735.h"
 /* CubeMx Include */
 #include "spi.h"
+#include "lvgl.h"
 
 /*LCD_BL背光*/
 #define LCD_BL_ON()        HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, GPIO_PIN_SET)
@@ -15,13 +16,15 @@
 #define LCD_WR_DAT()       HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_SET)
 #define LCD_WR_CMD()       HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_RESET)
 
-#define __spi_speed        SPI_BAUDRATEPRESCALER_2  
+#define __spi_speed        SPI_BAUDRATEPRESCALER_4  
 
-#define Gramsize 16384
-uint16_t Gram[Gramsize];
+//#define Gramsize 16384
+//uint16_t Gram[Gramsize];
 
 extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef hdma_spi1_tx;
+
+uint8_t DMA_GO;
 
 
 
@@ -240,8 +243,10 @@ void LCD_Init(void)
 	WriteDat(0x05); 
 	
 	WriteCmd(0x29);//Display on
-	WriteAnColor(0x0000);
+	
 	LCD_BL_ON();
+	WriteAnColor(0x0000);
+	
 }
 
 /*
@@ -252,33 +257,33 @@ void LCD_Init(void)
 *    返 回 值: None
 *********************************************************************************************************
 */
-void LCD_Flush_Color(uint16_t color)
-{
-    int i=0;
-	for(i=0;i<Gramsize;i++) Gram[i]=color;
-	setPos( 0, 127, 0, 127 );
-	
-	SPI1->CFG1 = __spi_speed | SPI_DATASIZE_16BIT;
-	LCD_CS_Start();
-	LCD_WR_DAT();
-	HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)Gram, Gramsize);
-}
+//void LCD_Flush_Color(uint16_t color)
+//{
+//    int i=0;
+//	for(i=0;i<Gramsize;i++) Gram[i]=color;
+//	setPos( 0, 127, 0, 127 );
+//	
+//	SPI1->CFG1 = __spi_speed | SPI_DATASIZE_16BIT;
+//	LCD_CS_Start();
+//	LCD_WR_DAT();
+//	HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)Gram, Gramsize);
+//}
 
-void gram_set (uint16_t color, uint16_t buffersize)
-{
-	int i=0;
-	for(i=0;i<buffersize;i++) Gram[i]=color;
-}
+//void gram_set (uint16_t color, uint16_t buffersize)
+//{
+//	int i=0;
+//	for(i=0;i<buffersize;i++) Gram[i]=color;
+//}
 
-void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t pColor)
+void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t* pColor)
 {
+	DMA_GO=0;
 	/* Count buffersize */
 	uint16_t width,height;
 	uint16_t buffersize;
 	width=ex-sx+1; 			//宽度
 	height=ey-sy+1;			//高度
 	buffersize=width*height;
-	gram_set (pColor, buffersize);
 	
 	/* Set Position of flush area */
 	setPos(sx, ex, sy, ey);
@@ -289,7 +294,8 @@ void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t pCo
 	/* Start Transmit */
 	LCD_CS_Start();
 	LCD_WR_DAT();
-	HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)Gram, buffersize);
+	HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)pColor, buffersize);
+	while(DMA_GO==0);
 }
 
 
@@ -309,10 +315,12 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	UNUSED(hspi);
 	LCD_CS_End();
+	DMA_GO = 1;
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	UNUSED(htim);
-	DMA_Color_Fill(0, 128, 15, 25, 0x1234);
+//	DMA_Color_Fill(0, 128, 15, 25, 0x1234);
+	lv_tick_inc(1);
 }

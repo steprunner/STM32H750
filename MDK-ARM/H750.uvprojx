@@ -276,7 +276,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x200000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32H750xx,LV_CONF_INCLUDE_SIMPLE,NDEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../User;../bsp;..\lvgl;..\lvgl\porting;..\lvgl\src</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../bsp;../lvgl;../lvgl/src;../lvgl/porting</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1765,11 +1765,6 @@
               <FileName>lv_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\lvgl\lv_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>lv_port_disp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\lvgl\porting\lv_port_disp.c</FilePath>
             </File>
           </Files>
         </Group>

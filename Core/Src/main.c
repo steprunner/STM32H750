@@ -27,6 +27,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bsp_tft_st7735.h"
+#include "lvgl.h"
+#include "lv_port_disp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,10 +103,13 @@ int main(void)
   
   LCD_Init();
   HAL_Delay(100);
-  LCD_Flush_Color(0x3333);
-  HAL_Delay(100);
-  
+//  LCD_Flush_Color(0x3333);
+//  HAL_Delay(100);
   HAL_TIM_Base_Start_IT(&htim3);
+  
+  lv_init();
+  lv_port_disp_init();
+  
 
   /* USER CODE END 2 */
 
@@ -138,6 +143,8 @@ int main(void)
 //				DMA_Color_Fill(0, 30, 15, 25, 0x1234);
 //			}
 //		}
+        lv_task_handler();
+//		HAL_Delay(5);
 	}
   /* USER CODE END 3 */
 }
