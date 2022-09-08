@@ -16,7 +16,7 @@
 #define LCD_WR_DAT()       HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_SET)
 #define LCD_WR_CMD()       HAL_GPIO_WritePin(LCD_DC_GPIO_Port, LCD_DC_Pin, GPIO_PIN_RESET)
 
-#define __spi_speed        SPI_BAUDRATEPRESCALER_4  
+#define __spi_speed        SPI_BAUDRATEPRESCALER_2  
 
 //#define Gramsize 16384
 //uint16_t Gram[Gramsize];
@@ -24,7 +24,13 @@
 extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef hdma_spi1_tx;
 
-uint8_t DMA_GO;
+typedef struct __Anime
+{
+	bool flush_tg;
+}Anime;
+
+Anime St7735_Ani;
+
 
 
 
@@ -277,7 +283,6 @@ void LCD_Init(void)
 
 void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t* pColor)
 {
-	DMA_GO=0;
 	/* Count buffersize */
 	uint16_t width,height;
 	uint16_t buffersize;
@@ -295,7 +300,6 @@ void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t* pC
 	LCD_CS_Start();
 	LCD_WR_DAT();
 	HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)pColor, buffersize);
-	while(DMA_GO==0);
 }
 
 
@@ -315,12 +319,10 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	UNUSED(hspi);
 	LCD_CS_End();
-	DMA_GO = 1;
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	UNUSED(htim);
-//	DMA_Color_Fill(0, 128, 15, 25, 0x1234);
 	lv_tick_inc(1);
 }

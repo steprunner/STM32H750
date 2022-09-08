@@ -60,6 +60,33 @@ static void MPU_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 extern TIM_HandleTypeDef htim3;
+
+
+
+void lv_100ask_demo_course_2_1_1(void)
+{
+
+    lv_obj_t *btn = lv_btn_create(lv_scr_act());
+    lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
+//    lv_obj_set_height(btn, 30);
+	lv_obj_set_size(btn, 120, 120);
+ 
+    lv_obj_t *label;
+    label = lv_label_create(btn);
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text(label, "LVGL");
+ 
+    static lv_style_t style_btn;
+    lv_style_init(&style_btn);
+    lv_style_set_radius(&style_btn, 10);
+    lv_style_set_border_color(&style_btn, lv_color_white());
+    lv_style_set_border_opa(&style_btn, LV_OPA_30);
+    lv_obj_add_style(btn, &style_btn, LV_STATE_DEFAULT);
+
+}
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -103,48 +130,30 @@ int main(void)
   
   LCD_Init();
   HAL_Delay(100);
-//  LCD_Flush_Color(0x3333);
-//  HAL_Delay(100);
-  HAL_TIM_Base_Start_IT(&htim3);
+  
   
   lv_init();
   lv_port_disp_init();
   
+  lv_100ask_demo_course_2_1_1();
+
+
+
+
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  HAL_TIM_Base_Start_IT(&htim3);
   while (1)
 	{
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//		Led_Set();
-//		printf("hello world!\n");
-//		WriteAnColor(0x0000);
-//		WriteAnColor(0x1234);
-//		WriteAnColor(0x4321);
-//		WriteAnColor(0x0c35);
-//		HAL_Delay(20);
-//		HAL_Delay(100);
-////		LCD_Flush_Color(0xAA12);
-//		DMA_Color_Fill(0, 128, 15, 25, 0x1234);
-		
-//		if(Anime_Flag == 1)
-//		{
-//			Anime_Flag = 0;
-//			if (i > 128)
-//			{
-//				DMA_Color_Fill(0, 128, 15, 25, 0x0000);
-//			}
-//			else
-//			{
-//				DMA_Color_Fill(0, 30, 15, 25, 0x1234);
-//			}
-//		}
+
         lv_task_handler();
-//		HAL_Delay(5);
+
 	}
   /* USER CODE END 3 */
 }
