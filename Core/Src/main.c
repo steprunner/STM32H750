@@ -29,6 +29,7 @@
 #include "bsp_tft_st7735.h"
 #include "lvgl.h"
 #include "lv_port_disp.h"
+#include "lv_demos.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,12 +70,12 @@ void lv_100ask_demo_course_2_1_1(void)
     lv_obj_t *btn = lv_btn_create(lv_scr_act());
     lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
 //    lv_obj_set_height(btn, 30);
-	lv_obj_set_size(btn, 120, 120);
+	lv_obj_set_size(btn, 100, 40);
  
     lv_obj_t *label;
     label = lv_label_create(btn);
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-    lv_label_set_text(label, "LVGL");
+    lv_label_set_text(label, "HELLO LVGL");
  
     static lv_style_t style_btn;
     lv_style_init(&style_btn);
@@ -136,6 +137,9 @@ int main(void)
   lv_port_disp_init();
   
   lv_100ask_demo_course_2_1_1();
+//  lv_demo_music();
+//  lv_demo_widgets();
+//  lv_demo_benchmark();
 
 
 
