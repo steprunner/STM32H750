@@ -24,12 +24,6 @@
 extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef hdma_spi1_tx;
 
-typedef struct __Anime
-{
-	bool flush_tg;
-}Anime;
-
-Anime St7735_Ani;
 
 
 
@@ -303,8 +297,6 @@ void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t* pC
 }
 
 
-
-
 /*
 *********************************************************************************************************
 *    函 数 名: Callback_Set & SPI_TxCpltCallback
@@ -314,12 +306,6 @@ void DMA_Color_Fill(uint8_t sx, uint8_t ex, uint8_t sy, uint8_t ey, uint16_t* pC
 *********************************************************************************************************
 */
 
-
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
-{
-	UNUSED(hspi);
-	LCD_CS_End();
-}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {

@@ -36,6 +36,10 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
  *  STATIC VARIABLES
  **********************/
 
+/*采用dma中断方式传输，避免死等dma结束造成阻塞，实现真正的双缓冲显示*/
+volatile uint8_t g_gpu_state = 0;//全局变量，进spi传输完成中断使用，判断是否刷新画面请求
+lv_disp_drv_t* g_disp_drv;//全局lv_disp_drv_t指针，用于中断回调函数的入口参数
+
 /**********************
  *      MACROS
  **********************/
@@ -132,7 +136,6 @@ void lv_port_disp_init(void)
 static void disp_init(void)
 {
     /*You code here*/
-//	LCD_Init();
 }
 
 /*Flush the content of the internal buffer the specific area on the display
@@ -142,23 +145,26 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
 {
     /*The most simple case (but also the slowest) to put all pixels to the screen one-by-one*/
 
-//    int32_t x;
-//    int32_t y;
-//    for(y = area->y1; y <= area->y2; y++) {
-//        for(x = area->x1; x <= area->x2; x++) {
-//            /*Put a pixel to the display. For example:*/
-//            /*put_px(x, y, *color_p)*/
-//            color_p++;
-//        }
-//    }
+	g_disp_drv=disp_drv;
 	DMA_Color_Fill(area->x1, area->x2, area->y1, area->y2, (uint16_t *)color_p);
-	HAL_Delay(1);
 
     /*IMPORTANT!!!
      *Inform the graphics library that you are ready with the flushing*/
-    lv_disp_flush_ready(disp_drv);
+	/*Set <lv_disp_flush_ready> to <HAL_SPI_TxCpltCallback> */
+	g_gpu_state = 1;
 }
 
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+	UNUSED(hspi);
+	HAL_GPIO_WritePin(LCD_CS_GPIO_Port, LCD_CS_Pin, GPIO_PIN_SET);
+	if(g_gpu_state == 1)
+	{
+		g_gpu_state = 0;
+		lv_disp_flush_ready(g_disp_drv);
+	}
+}
 /*OPTIONAL: GPU INTERFACE*/
 
 /*If your MCU has hardware accelerator (GPU) then you can use it to fill a memory with a color*/
